@@ -100,7 +100,7 @@ fun WelcomeScreen(
                 InfoCard(
                     number = "3",
                     title = "Be Patient",
-                    description = "These feelings will pass. You've gotten through this before."
+                    description = "These feelings will pass. Everything is going to be okay."
                 )
                 
                 Spacer(modifier = Modifier.height(48.dp))
