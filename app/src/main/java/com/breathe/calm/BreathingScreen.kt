@@ -94,7 +94,7 @@ fun BreathingScreen(
                     )
                 }
                 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(4.dp))
                 
                 // Breathing visualization
                 BreathingVisualization(
@@ -102,7 +102,7 @@ fun BreathingScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
                 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(4.dp))
                 
                 // Down arrow to decrease duration
                 Row(
@@ -344,24 +344,41 @@ private fun TriangleButton(
         contentAlignment = Alignment.Center
     ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
-            val path = androidx.compose.ui.graphics.Path().apply {
-                if (pointingUp) {
-                    // Wide triangle pointing up (hat shape)
-                    moveTo(size.width / 2f, 0f)  // Top center (point)
-                    lineTo(size.width, size.height)  // Bottom right
-                    lineTo(0f, size.height)  // Bottom left
-                } else {
-                    // Wide triangle pointing down (inverted hat shape)
-                    moveTo(0f, 0f)  // Top left
-                    lineTo(size.width, 0f)  // Top right
-                    lineTo(size.width / 2f, size.height)  // Bottom center (point)
-                }
-                close()
+            val strokeWidth = 3.dp.toPx()
+            
+            if (pointingUp) {
+                // Hollow chevron pointing up - draw two lines forming a ^
+                // Left line (bottom-left to top-center)
+                drawLine(
+                    color = color,
+                    start = Offset(0f, size.height),
+                    end = Offset(size.width / 2f, 0f),
+                    strokeWidth = strokeWidth
+                )
+                // Right line (top-center to bottom-right)
+                drawLine(
+                    color = color,
+                    start = Offset(size.width / 2f, 0f),
+                    end = Offset(size.width, size.height),
+                    strokeWidth = strokeWidth
+                )
+            } else {
+                // Hollow chevron pointing down - draw two lines forming a v
+                // Left line (top-left to bottom-center)
+                drawLine(
+                    color = color,
+                    start = Offset(0f, 0f),
+                    end = Offset(size.width / 2f, size.height),
+                    strokeWidth = strokeWidth
+                )
+                // Right line (bottom-center to top-right)
+                drawLine(
+                    color = color,
+                    start = Offset(size.width / 2f, size.height),
+                    end = Offset(size.width, 0f),
+                    strokeWidth = strokeWidth
+                )
             }
-            drawPath(
-                path = path,
-                color = color
-            )
         }
     }
 }
