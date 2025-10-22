@@ -21,6 +21,6 @@ data class BreathingState(
     val cycleCount: Int = 0,
     val currentSecond: Int = 0, // Current second in the phase (0-3)
     val phaseDurationSeconds: Int = 4, // Duration of each phase in seconds (adjustable)
-    val sessionLengthSeconds: Int = 30, // Total session length in seconds (adjustable)
+    val sessionLengthSeconds: Int = 60, // Total session length in seconds (adjustable)
     val totalElapsedSeconds: Int = 0 // Total elapsed time in current session
 )

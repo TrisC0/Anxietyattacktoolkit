@@ -66,38 +66,14 @@ fun BreathingScreen(
             // Header
             HeaderSection()
             
-            // Main breathing visualization with duration controls
-            Column(
+            // Main breathing visualization
+            Box(
                 modifier = Modifier.weight(1f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                contentAlignment = Alignment.Center
             ) {
-                // Up arrow to increase duration
-                TriangleButton(
-                    pointingUp = true,
-                    enabled = !state.isActive && state.phaseDurationSeconds < 5,
-                    onClick = { viewModel.increaseDuration() },
-                    contentDescription = "Increase duration",
-                    label = "+1"
-                )
-                
-                Spacer(modifier = Modifier.height(4.dp))
-                
-                // Breathing visualization
                 BreathingVisualization(
                     state = state,
                     modifier = Modifier.fillMaxWidth()
-                )
-                
-                Spacer(modifier = Modifier.height(4.dp))
-                
-                // Down arrow to decrease duration
-                TriangleButton(
-                    pointingUp = false,
-                    enabled = !state.isActive && state.phaseDurationSeconds > 3,
-                    onClick = { viewModel.decreaseDuration() },
-                    contentDescription = "Decrease duration",
-                    label = "-1"
                 )
             }
             
@@ -290,81 +266,6 @@ private fun ProgressRing(
                 (size.height - radius * 2) / 2
             ),
             size = androidx.compose.ui.geometry.Size(radius * 2, radius * 2)
-        )
-    }
-}
-
-@Composable
-private fun TriangleButton(
-    pointingUp: Boolean,
-    enabled: Boolean,
-    onClick: () -> Unit,
-    contentDescription: String,
-    label: String
-) {
-    val color = if (enabled) MaterialTheme.colorScheme.secondaryContainer
-                else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
-    
-    val textColor = if (enabled) MaterialTheme.colorScheme.onBackground
-                    else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
-    
-    Box(
-        modifier = Modifier
-            .width(120.dp)
-            .height(32.dp)
-            .clickable(
-                enabled = enabled,
-                onClick = onClick,
-                indication = null,
-                interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
-            )
-            .semantics { this.contentDescription = contentDescription },
-        contentAlignment = Alignment.Center
-    ) {
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            val strokeWidth = 3.dp.toPx()
-            
-            if (pointingUp) {
-                // Hollow chevron pointing up - draw two lines forming a ^
-                // Left line (bottom-left to top-center)
-                drawLine(
-                    color = color,
-                    start = Offset(0f, size.height),
-                    end = Offset(size.width / 2f, 0f),
-                    strokeWidth = strokeWidth
-                )
-                // Right line (top-center to bottom-right)
-                drawLine(
-                    color = color,
-                    start = Offset(size.width / 2f, 0f),
-                    end = Offset(size.width, size.height),
-                    strokeWidth = strokeWidth
-                )
-            } else {
-                // Hollow chevron pointing down - draw two lines forming a v
-                // Left line (top-left to bottom-center)
-                drawLine(
-                    color = color,
-                    start = Offset(0f, 0f),
-                    end = Offset(size.width / 2f, size.height),
-                    strokeWidth = strokeWidth
-                )
-                // Right line (bottom-center to top-right)
-                drawLine(
-                    color = color,
-                    start = Offset(size.width / 2f, size.height),
-                    end = Offset(size.width, 0f),
-                    strokeWidth = strokeWidth
-                )
-            }
-        }
-        
-        // Text label in center
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelMedium,
-            color = textColor,
-            fontWeight = FontWeight.Bold
         )
     }
 }
