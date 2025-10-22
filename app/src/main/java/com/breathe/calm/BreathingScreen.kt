@@ -72,12 +72,26 @@ fun BreathingScreen(
                 verticalArrangement = Arrangement.Center
             ) {
                 // Up arrow to increase duration
-                DurationControlButton(
-                    icon = Icons.Default.KeyboardArrowUp,
-                    enabled = !state.isActive && state.phaseDurationSeconds < 10,
-                    onClick = { viewModel.increaseDuration() },
-                    contentDescription = "Increase duration"
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    DurationControlButton(
+                        icon = Icons.Default.KeyboardArrowUp,
+                        enabled = !state.isActive && state.phaseDurationSeconds < 10,
+                        onClick = { viewModel.increaseDuration() },
+                        contentDescription = "Increase duration"
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "+1",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = if (!state.isActive && state.phaseDurationSeconds < 10)
+                            MaterialTheme.colorScheme.onBackground
+                        else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                        fontWeight = FontWeight.Medium
+                    )
+                }
                 
                 Spacer(modifier = Modifier.height(16.dp))
                 
@@ -90,12 +104,26 @@ fun BreathingScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 
                 // Down arrow to decrease duration
-                DurationControlButton(
-                    icon = Icons.Default.KeyboardArrowDown,
-                    enabled = !state.isActive && state.phaseDurationSeconds > 2,
-                    onClick = { viewModel.decreaseDuration() },
-                    contentDescription = "Decrease duration"
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    DurationControlButton(
+                        icon = Icons.Default.KeyboardArrowDown,
+                        enabled = !state.isActive && state.phaseDurationSeconds > 2,
+                        onClick = { viewModel.decreaseDuration() },
+                        contentDescription = "Decrease duration"
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "-1",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = if (!state.isActive && state.phaseDurationSeconds > 2)
+                            MaterialTheme.colorScheme.onBackground
+                        else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                        fontWeight = FontWeight.Medium
+                    )
+                }
             }
             
             // Phase instruction
