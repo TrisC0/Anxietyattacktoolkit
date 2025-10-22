@@ -148,15 +148,15 @@ private fun BreathingVisualization(
     
     // Animate circle scale based on breathing phase
     val targetScale = when (state.currentPhase) {
-        BreathingPhase.INHALE -> 1.0f
-        BreathingPhase.HOLD_IN -> 1.0f
-        BreathingPhase.EXHALE -> 0.5f
-        BreathingPhase.HOLD_OUT -> 0.5f
-        BreathingPhase.IDLE -> 0.7f
+        BreathingPhase.INHALE -> 1.2f      // Circle grows when breathing in
+        BreathingPhase.HOLD_IN -> 1.2f     // Stay large while holding
+        BreathingPhase.EXHALE -> 0.6f      // Circle shrinks when breathing out
+        BreathingPhase.HOLD_OUT -> 0.6f    // Stay small while holding
+        BreathingPhase.IDLE -> 0.9f
     }
     
     val animatedScale by animateFloatAsState(
-        targetValue = if (state.isActive) targetScale else 0.7f,
+        targetValue = if (state.isActive) targetScale else 0.9f,
         animationSpec = tween(
             durationMillis = if (state.currentPhase == BreathingPhase.HOLD_IN || 
                                state.currentPhase == BreathingPhase.HOLD_OUT) 0 
