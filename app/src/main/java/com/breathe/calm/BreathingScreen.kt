@@ -129,12 +129,6 @@ private fun HeaderSection() {
             color = MaterialTheme.colorScheme.onBackground,
             fontWeight = FontWeight.Bold
         )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = stringResource(R.string.find_your_calm),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
     }
 }
 
