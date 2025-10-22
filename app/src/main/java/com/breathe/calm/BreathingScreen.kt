@@ -73,6 +73,7 @@ fun BreathingScreen(
             ) {
                 BreathingVisualization(
                     state = state,
+                    onStart = { viewModel.startBreathing() },
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -142,6 +143,7 @@ private fun HeaderSection() {
 @Composable
 private fun BreathingVisualization(
     state: BreathingState,
+    onStart: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val breathingColors = getBreathingColors(state.currentPhase)
@@ -199,12 +201,34 @@ private fun BreathingVisualization(
         )
         
         // Center content
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            // Display countdown or duration in center of circle
-            if (state.currentPhase != BreathingPhase.IDLE) {
+        if (state.currentPhase == BreathingPhase.IDLE) {
+            // Begin button when idle
+            Button(
+                onClick = onStart,
+                modifier = Modifier
+                    .size(140.dp)
+                    .clip(CircleShape),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Secondary,
+                    contentColor = OnSecondary
+                ),
+                elevation = ButtonDefaults.buttonElevation(
+                    defaultElevation = 4.dp,
+                    pressedElevation = 8.dp
+                )
+            ) {
+                Text(
+                    text = "Begin!",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        } else {
+            // Display countdown during active breathing
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
                 val secondsRemaining = state.phaseDurationSeconds - state.currentSecond
                 Text(
                     text = "$secondsRemaining",
@@ -212,27 +236,15 @@ private fun BreathingVisualization(
                     color = breathingColors.first,
                     fontWeight = FontWeight.Bold
                 )
-            } else {
-                Text(
-                    text = "${state.phaseDurationSeconds}",
-                    style = MaterialTheme.typography.displayLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = "seconds",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            
-            if (state.cycleCount > 0) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "Cycle ${state.cycleCount}",
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                
+                if (state.cycleCount > 0) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Cycle ${state.cycleCount}",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
         }
     }
