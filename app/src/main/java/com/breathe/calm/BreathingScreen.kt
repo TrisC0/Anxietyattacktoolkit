@@ -127,12 +127,26 @@ fun BreathingScreen(
                 }
             }
             
-            // Phase instruction
-            PhaseInstructionText(
-                phase = state.currentPhase,
-                currentSecond = state.currentSecond,
-                phaseDurationSeconds = state.phaseDurationSeconds
-            )
+            // Phase instruction and session length
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(vertical = 24.dp)
+            ) {
+                PhaseInstructionText(
+                    phase = state.currentPhase
+                )
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                // Session length display and controls
+                SessionLengthControl(
+                    sessionLengthSeconds = state.sessionLengthSeconds,
+                    totalElapsedSeconds = state.totalElapsedSeconds,
+                    isActive = state.isActive,
+                    onIncrease = { viewModel.increaseSessionLength() },
+                    onDecrease = { viewModel.decreaseSessionLength() }
+                )
+            }
             
             Spacer(modifier = Modifier.height(32.dp))
             
@@ -353,9 +367,7 @@ private fun TriangleButton(
 
 @Composable
 private fun PhaseInstructionText(
-    phase: BreathingPhase,
-    currentSecond: Int,
-    phaseDurationSeconds: Int
+    phase: BreathingPhase
 ) {
     val instruction = when (phase) {
         BreathingPhase.IDLE -> "Ready to begin"
@@ -365,17 +377,84 @@ private fun PhaseInstructionText(
         BreathingPhase.HOLD_OUT -> "Hold"
     }
     
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(vertical = 24.dp)
+    Text(
+        text = instruction,
+        style = MaterialTheme.typography.displaySmall,
+        color = MaterialTheme.colorScheme.onBackground,
+        fontWeight = FontWeight.Bold,
+        textAlign = TextAlign.Center
+    )
+}
+
+@Composable
+private fun SessionLengthControl(
+    sessionLengthSeconds: Int,
+    totalElapsedSeconds: Int,
+    isActive: Boolean,
+    onIncrease: () -> Unit,
+    onDecrease: () -> Unit
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier.padding(horizontal = 24.dp)
     ) {
-        Text(
-            text = instruction,
-            style = MaterialTheme.typography.displaySmall,
-            color = MaterialTheme.colorScheme.onBackground,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center
-        )
+        // Decrease button
+        IconButton(
+            onClick = onDecrease,
+            enabled = !isActive && sessionLengthSeconds > 10,
+            modifier = Modifier.size(32.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.KeyboardArrowDown,
+                contentDescription = "Decrease session length",
+                tint = if (!isActive && sessionLengthSeconds > 10)
+                    MaterialTheme.colorScheme.onBackground
+                else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f),
+                modifier = Modifier.size(24.dp)
+            )
+        }
+        
+        Spacer(modifier = Modifier.width(12.dp))
+        
+        // Session length display
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (isActive) {
+                Text(
+                    text = "${sessionLengthSeconds - totalElapsedSeconds}s remaining",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Medium
+                )
+            } else {
+                Text(
+                    text = "Session: ${sessionLengthSeconds}s",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+        }
+        
+        Spacer(modifier = Modifier.width(12.dp))
+        
+        // Increase button
+        IconButton(
+            onClick = onIncrease,
+            enabled = !isActive && sessionLengthSeconds < 300,
+            modifier = Modifier.size(32.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.KeyboardArrowUp,
+                contentDescription = "Increase session length",
+                tint = if (!isActive && sessionLengthSeconds < 300)
+                    MaterialTheme.colorScheme.onBackground
+                else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f),
+                modifier = Modifier.size(24.dp)
+            )
+        }
     }
 }
 

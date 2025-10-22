@@ -25,6 +25,9 @@ class BreathingViewModel : ViewModel() {
         private const val UPDATE_INTERVAL_MS = 16L // ~60 FPS for smooth animation
         private const val MIN_DURATION_SECONDS = 3
         private const val MAX_DURATION_SECONDS = 5
+        private const val MIN_SESSION_LENGTH = 10
+        private const val MAX_SESSION_LENGTH = 300 // 5 minutes max
+        private const val SESSION_LENGTH_INCREMENT = 10
     }
     
     /**
@@ -33,24 +36,27 @@ class BreathingViewModel : ViewModel() {
     fun startBreathing() {
         if (_state.value.isActive) return
         
-        _state.update { it.copy(isActive = true, currentPhase = BreathingPhase.INHALE) }
+        _state.update { it.copy(isActive = true, currentPhase = BreathingPhase.INHALE, totalElapsedSeconds = 0) }
         
         breathingJob = viewModelScope.launch {
             var elapsedTime = 0L
             var currentPhase = BreathingPhase.INHALE
             var cycleCount = 0
+            val sessionLengthMs = _state.value.sessionLengthSeconds * 1000L
             
-            while (_state.value.isActive) {
+            while (_state.value.isActive && elapsedTime < sessionLengthMs) {
                 val phaseDurationMs = _state.value.phaseDurationSeconds * 1000L
                 val phaseProgress = (elapsedTime % phaseDurationMs).toFloat() / phaseDurationMs
                 val currentSecond = (elapsedTime % phaseDurationMs / 1000).toInt()
+                val totalElapsedSeconds = (elapsedTime / 1000).toInt()
                 
                 _state.update { 
                     it.copy(
                         currentPhase = currentPhase,
                         progress = phaseProgress,
                         cycleCount = cycleCount,
-                        currentSecond = currentSecond
+                        currentSecond = currentSecond,
+                        totalElapsedSeconds = totalElapsedSeconds
                     )
                 }
                 
@@ -71,6 +77,11 @@ class BreathingViewModel : ViewModel() {
                     }
                 }
             }
+            
+            // Session completed
+            if (elapsedTime >= sessionLengthMs) {
+                stopBreathing()
+            }
         }
     }
     
@@ -89,7 +100,10 @@ class BreathingViewModel : ViewModel() {
     fun resetBreathing() {
         stopBreathing()
         _state.update { 
-            BreathingState(phaseDurationSeconds = it.phaseDurationSeconds) 
+            BreathingState(
+                phaseDurationSeconds = it.phaseDurationSeconds,
+                sessionLengthSeconds = it.sessionLengthSeconds
+            ) 
         }
     }
     
@@ -108,6 +122,24 @@ class BreathingViewModel : ViewModel() {
     fun decreaseDuration() {
         if (!_state.value.isActive && _state.value.phaseDurationSeconds > MIN_DURATION_SECONDS) {
             _state.update { it.copy(phaseDurationSeconds = it.phaseDurationSeconds - 1) }
+        }
+    }
+    
+    /**
+     * Increase session length by 10 seconds
+     */
+    fun increaseSessionLength() {
+        if (!_state.value.isActive && _state.value.sessionLengthSeconds < MAX_SESSION_LENGTH) {
+            _state.update { it.copy(sessionLengthSeconds = it.sessionLengthSeconds + SESSION_LENGTH_INCREMENT) }
+        }
+    }
+    
+    /**
+     * Decrease session length by 10 seconds
+     */
+    fun decreaseSessionLength() {
+        if (!_state.value.isActive && _state.value.sessionLengthSeconds > MIN_SESSION_LENGTH) {
+            _state.update { it.copy(sessionLengthSeconds = it.sessionLengthSeconds - SESSION_LENGTH_INCREMENT) }
         }
     }
     
