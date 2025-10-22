@@ -6,6 +6,7 @@ import android.os.Vibrator
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -66,67 +67,63 @@ fun BreathingScreen(
             HeaderSection()
             
             // Main breathing visualization with duration controls
-            Box(
+            Column(
                 modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.Center
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
+                // Up arrow to increase duration
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    TriangleButton(
+                        pointingUp = true,
+                        enabled = !state.isActive && state.phaseDurationSeconds < 5,
+                        onClick = { viewModel.increaseDuration() },
+                        contentDescription = "Increase duration"
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "+1",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = if (!state.isActive && state.phaseDurationSeconds < 5)
+                            MaterialTheme.colorScheme.onBackground
+                        else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
                 // Breathing visualization
                 BreathingVisualization(
                     state = state,
                     modifier = Modifier.fillMaxWidth()
                 )
                 
-                // Duration controls on the right side
-                Column(
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .padding(end = 16.dp),
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.spacedBy(24.dp)
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                // Down arrow to decrease duration
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    // Up arrow to increase duration
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Start
-                    ) {
-                        DurationControlButton(
-                            icon = Icons.Default.KeyboardArrowUp,
-                            enabled = !state.isActive && state.phaseDurationSeconds < 5,
-                            onClick = { viewModel.increaseDuration() },
-                            contentDescription = "Increase duration"
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "+1",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = if (!state.isActive && state.phaseDurationSeconds < 5)
-                                MaterialTheme.colorScheme.onBackground
-                            else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
-                    
-                    // Down arrow to decrease duration
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Start
-                    ) {
-                        DurationControlButton(
-                            icon = Icons.Default.KeyboardArrowDown,
-                            enabled = !state.isActive && state.phaseDurationSeconds > 3,
-                            onClick = { viewModel.decreaseDuration() },
-                            contentDescription = "Decrease duration"
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "-1",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = if (!state.isActive && state.phaseDurationSeconds > 3)
-                                MaterialTheme.colorScheme.onBackground
-                            else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
+                    TriangleButton(
+                        pointingUp = false,
+                        enabled = !state.isActive && state.phaseDurationSeconds > 3,
+                        onClick = { viewModel.decreaseDuration() },
+                        contentDescription = "Decrease duration"
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "-1",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = if (!state.isActive && state.phaseDurationSeconds > 3)
+                            MaterialTheme.colorScheme.onBackground
+                        else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                        fontWeight = FontWeight.Medium
+                    )
                 }
             }
             
@@ -310,30 +307,47 @@ private fun ProgressRing(
 }
 
 @Composable
-private fun DurationControlButton(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+private fun TriangleButton(
+    pointingUp: Boolean,
     enabled: Boolean,
     onClick: () -> Unit,
     contentDescription: String
 ) {
-    IconButton(
-        onClick = onClick,
-        enabled = enabled,
+    val color = if (enabled) MaterialTheme.colorScheme.secondaryContainer
+                else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+    
+    Box(
         modifier = Modifier
             .size(56.dp)
-            .clip(CircleShape)
-            .background(
-                if (enabled) MaterialTheme.colorScheme.secondaryContainer
-                else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+            .clickable(
+                enabled = enabled,
+                onClick = onClick,
+                indication = null,
+                interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
             )
+            .semantics { this.contentDescription = contentDescription },
+        contentAlignment = Alignment.Center
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = contentDescription,
-            tint = if (enabled) MaterialTheme.colorScheme.onSecondaryContainer
-                   else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
-            modifier = Modifier.size(32.dp)
-        )
+        Canvas(modifier = Modifier.size(48.dp)) {
+            val path = androidx.compose.ui.graphics.Path().apply {
+                if (pointingUp) {
+                    // Triangle pointing up
+                    moveTo(size.width / 2f, 0f)  // Top center
+                    lineTo(size.width, size.height)  // Bottom right
+                    lineTo(0f, size.height)  // Bottom left
+                } else {
+                    // Triangle pointing down
+                    moveTo(0f, 0f)  // Top left
+                    lineTo(size.width, 0f)  // Top right
+                    lineTo(size.width / 2f, size.height)  // Bottom center
+                }
+                close()
+            }
+            drawPath(
+                path = path,
+                color = color
+            )
+        }
     }
 }
 
