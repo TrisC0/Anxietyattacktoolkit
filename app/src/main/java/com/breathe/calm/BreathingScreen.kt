@@ -73,26 +73,13 @@ fun BreathingScreen(
                 verticalArrangement = Arrangement.Center
             ) {
                 // Up arrow to increase duration
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    TriangleButton(
-                        pointingUp = true,
-                        enabled = !state.isActive && state.phaseDurationSeconds < 5,
-                        onClick = { viewModel.increaseDuration() },
-                        contentDescription = "Increase duration"
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "+1",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = if (!state.isActive && state.phaseDurationSeconds < 5)
-                            MaterialTheme.colorScheme.onBackground
-                        else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
-                        fontWeight = FontWeight.Medium
-                    )
-                }
+                TriangleButton(
+                    pointingUp = true,
+                    enabled = !state.isActive && state.phaseDurationSeconds < 5,
+                    onClick = { viewModel.increaseDuration() },
+                    contentDescription = "Increase duration",
+                    label = "+1"
+                )
                 
                 Spacer(modifier = Modifier.height(4.dp))
                 
@@ -105,26 +92,13 @@ fun BreathingScreen(
                 Spacer(modifier = Modifier.height(4.dp))
                 
                 // Down arrow to decrease duration
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    TriangleButton(
-                        pointingUp = false,
-                        enabled = !state.isActive && state.phaseDurationSeconds > 3,
-                        onClick = { viewModel.decreaseDuration() },
-                        contentDescription = "Decrease duration"
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "-1",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = if (!state.isActive && state.phaseDurationSeconds > 3)
-                            MaterialTheme.colorScheme.onBackground
-                        else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
-                        fontWeight = FontWeight.Medium
-                    )
-                }
+                TriangleButton(
+                    pointingUp = false,
+                    enabled = !state.isActive && state.phaseDurationSeconds > 3,
+                    onClick = { viewModel.decreaseDuration() },
+                    contentDescription = "Decrease duration",
+                    label = "-1"
+                )
             }
             
             // Phase instruction and session length
@@ -325,10 +299,14 @@ private fun TriangleButton(
     pointingUp: Boolean,
     enabled: Boolean,
     onClick: () -> Unit,
-    contentDescription: String
+    contentDescription: String,
+    label: String
 ) {
     val color = if (enabled) MaterialTheme.colorScheme.secondaryContainer
                 else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+    
+    val textColor = if (enabled) MaterialTheme.colorScheme.onBackground
+                    else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
     
     Box(
         modifier = Modifier
@@ -380,6 +358,14 @@ private fun TriangleButton(
                 )
             }
         }
+        
+        // Text label in center
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelMedium,
+            color = textColor,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
 
