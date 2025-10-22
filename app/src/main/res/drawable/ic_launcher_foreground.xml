@@ -3,15 +3,39 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-  <group android:scaleX="0.5"
-      android:scaleY="0.5"
-      android:translateX="27"
-      android:translateY="27">
+  <group android:scaleX="0.85"
+      android:scaleY="0.85"
+      android:translateX="8"
+      android:translateY="8">
+    <!-- First Aid Kit Body (White) -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M54,27C40.2,27 29,38.2 29,52C29,65.8 40.2,77 54,77C67.8,77 79,65.8 79,52C79,38.2 67.8,27 54,27ZM54,72C43,72 34,63 34,52C34,41 43,32 54,32C65,32 74,41 74,52C74,63 65,72 54,72Z"/>
+        android:pathData="M30,35 L78,35 L78,85 L30,85 Z"/>
+    
+    <!-- First Aid Kit Top Handle Area (Light Gray) -->
     <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M54,40C47.4,40 42,45.4 42,52C42,58.6 47.4,64 54,64C60.6,64 66,58.6 66,52C66,45.4 60.6,40 54,40Z"/>
+        android:fillColor="#E0E0E0"
+        android:pathData="M35,30 L73,30 L73,38 L35,38 Z"/>
+    
+    <!-- Handle -->
+    <path
+        android:fillColor="#C0C0C0"
+        android:strokeWidth="3"
+        android:pathData="M42,26 Q54,20 66,26"/>
+    
+    <!-- Green Cross - Vertical Bar -->
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M49,48 L59,48 L59,72 L49,72 Z"/>
+    
+    <!-- Green Cross - Horizontal Bar -->
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M42,55 L66,55 L66,65 L42,65 Z"/>
+    
+    <!-- First Aid Kit Lock/Clasp (Gray) -->
+    <path
+        android:fillColor="#757575"
+        android:pathData="M52,38 L56,38 L56,42 L52,42 Z"/>
   </group>
 </vector>
