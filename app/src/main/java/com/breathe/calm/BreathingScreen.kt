@@ -78,7 +78,7 @@ fun BreathingScreen(
                 ) {
                     DurationControlButton(
                         icon = Icons.Default.KeyboardArrowUp,
-                        enabled = !state.isActive && state.phaseDurationSeconds < 10,
+                        enabled = !state.isActive && state.phaseDurationSeconds < 5,
                         onClick = { viewModel.increaseDuration() },
                         contentDescription = "Increase duration"
                     )
@@ -86,7 +86,7 @@ fun BreathingScreen(
                     Text(
                         text = "+1",
                         style = MaterialTheme.typography.titleMedium,
-                        color = if (!state.isActive && state.phaseDurationSeconds < 10)
+                        color = if (!state.isActive && state.phaseDurationSeconds < 5)
                             MaterialTheme.colorScheme.onBackground
                         else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                         fontWeight = FontWeight.Medium
@@ -110,7 +110,7 @@ fun BreathingScreen(
                 ) {
                     DurationControlButton(
                         icon = Icons.Default.KeyboardArrowDown,
-                        enabled = !state.isActive && state.phaseDurationSeconds > 2,
+                        enabled = !state.isActive && state.phaseDurationSeconds > 3,
                         onClick = { viewModel.decreaseDuration() },
                         contentDescription = "Decrease duration"
                     )
@@ -118,7 +118,7 @@ fun BreathingScreen(
                     Text(
                         text = "-1",
                         style = MaterialTheme.typography.titleMedium,
-                        color = if (!state.isActive && state.phaseDurationSeconds > 2)
+                        color = if (!state.isActive && state.phaseDurationSeconds > 3)
                             MaterialTheme.colorScheme.onBackground
                         else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                         fontWeight = FontWeight.Medium

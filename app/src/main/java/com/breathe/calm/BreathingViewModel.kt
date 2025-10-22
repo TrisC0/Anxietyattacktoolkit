@@ -23,8 +23,8 @@ class BreathingViewModel : ViewModel() {
     
     companion object {
         private const val UPDATE_INTERVAL_MS = 16L // ~60 FPS for smooth animation
-        private const val MIN_DURATION_SECONDS = 2
-        private const val MAX_DURATION_SECONDS = 10
+        private const val MIN_DURATION_SECONDS = 3
+        private const val MAX_DURATION_SECONDS = 5
     }
     
     /**
