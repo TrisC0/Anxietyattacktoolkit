@@ -94,7 +94,7 @@ fun BreathingScreen(
                     )
                 }
                 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(8.dp))
                 
                 // Breathing visualization
                 BreathingVisualization(
@@ -102,7 +102,7 @@ fun BreathingScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
                 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(8.dp))
                 
                 // Down arrow to decrease duration
                 Row(
@@ -332,7 +332,8 @@ private fun TriangleButton(
     
     Box(
         modifier = Modifier
-            .size(56.dp)
+            .width(120.dp)
+            .height(32.dp)
             .clickable(
                 enabled = enabled,
                 onClick = onClick,
@@ -342,18 +343,18 @@ private fun TriangleButton(
             .semantics { this.contentDescription = contentDescription },
         contentAlignment = Alignment.Center
     ) {
-        Canvas(modifier = Modifier.size(48.dp)) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
             val path = androidx.compose.ui.graphics.Path().apply {
                 if (pointingUp) {
-                    // Triangle pointing up
-                    moveTo(size.width / 2f, 0f)  // Top center
+                    // Wide triangle pointing up (hat shape)
+                    moveTo(size.width / 2f, 0f)  // Top center (point)
                     lineTo(size.width, size.height)  // Bottom right
                     lineTo(0f, size.height)  // Bottom left
                 } else {
-                    // Triangle pointing down
+                    // Wide triangle pointing down (inverted hat shape)
                     moveTo(0f, 0f)  // Top left
                     lineTo(size.width, 0f)  // Top right
-                    lineTo(size.width / 2f, size.height)  // Bottom center
+                    lineTo(size.width / 2f, size.height)  // Bottom center (point)
                 }
                 close()
             }
