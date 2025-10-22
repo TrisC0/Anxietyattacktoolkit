@@ -66,63 +66,67 @@ fun BreathingScreen(
             HeaderSection()
             
             // Main breathing visualization with duration controls
-            Column(
+            Box(
                 modifier = Modifier.weight(1f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                contentAlignment = Alignment.Center
             ) {
-                // Up arrow to increase duration
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    DurationControlButton(
-                        icon = Icons.Default.KeyboardArrowUp,
-                        enabled = !state.isActive && state.phaseDurationSeconds < 5,
-                        onClick = { viewModel.increaseDuration() },
-                        contentDescription = "Increase duration"
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "+1",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = if (!state.isActive && state.phaseDurationSeconds < 5)
-                            MaterialTheme.colorScheme.onBackground
-                        else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-                
-                Spacer(modifier = Modifier.height(16.dp))
-                
                 // Breathing visualization
                 BreathingVisualization(
                     state = state,
                     modifier = Modifier.fillMaxWidth()
                 )
                 
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                // Down arrow to decrease duration
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                // Duration controls on the right side
+                Column(
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .padding(end = 16.dp),
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.spacedBy(24.dp)
                 ) {
-                    DurationControlButton(
-                        icon = Icons.Default.KeyboardArrowDown,
-                        enabled = !state.isActive && state.phaseDurationSeconds > 3,
-                        onClick = { viewModel.decreaseDuration() },
-                        contentDescription = "Decrease duration"
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "-1",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = if (!state.isActive && state.phaseDurationSeconds > 3)
-                            MaterialTheme.colorScheme.onBackground
-                        else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
-                        fontWeight = FontWeight.Medium
-                    )
+                    // Up arrow to increase duration
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Start
+                    ) {
+                        DurationControlButton(
+                            icon = Icons.Default.KeyboardArrowUp,
+                            enabled = !state.isActive && state.phaseDurationSeconds < 5,
+                            onClick = { viewModel.increaseDuration() },
+                            contentDescription = "Increase duration"
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "+1",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = if (!state.isActive && state.phaseDurationSeconds < 5)
+                                MaterialTheme.colorScheme.onBackground
+                            else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                    
+                    // Down arrow to decrease duration
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Start
+                    ) {
+                        DurationControlButton(
+                            icon = Icons.Default.KeyboardArrowDown,
+                            enabled = !state.isActive && state.phaseDurationSeconds > 3,
+                            onClick = { viewModel.decreaseDuration() },
+                            contentDescription = "Decrease duration"
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "-1",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = if (!state.isActive && state.phaseDurationSeconds > 3)
+                                MaterialTheme.colorScheme.onBackground
+                            else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
                 }
             }
             
