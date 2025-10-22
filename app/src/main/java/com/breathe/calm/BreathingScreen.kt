@@ -209,7 +209,31 @@ private fun BreathingVisualization(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            // Display countdown or duration in center of circle
+            if (state.currentPhase != BreathingPhase.IDLE) {
+                val secondsRemaining = state.phaseDurationSeconds - state.currentSecond
+                Text(
+                    text = "$secondsRemaining",
+                    style = MaterialTheme.typography.displayLarge,
+                    color = breathingColors.first,
+                    fontWeight = FontWeight.Bold
+                )
+            } else {
+                Text(
+                    text = "${state.phaseDurationSeconds}",
+                    style = MaterialTheme.typography.displayLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "seconds",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            
             if (state.cycleCount > 0) {
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = "Cycle ${state.cycleCount}",
                     style = MaterialTheme.typography.labelLarge,
@@ -295,8 +319,6 @@ private fun PhaseInstructionText(
         BreathingPhase.HOLD_OUT -> "Hold"
     }
     
-    val secondsRemaining = phaseDurationSeconds - currentSecond
-    
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.padding(vertical = 24.dp)
@@ -308,23 +330,6 @@ private fun PhaseInstructionText(
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
         )
-        
-        if (phase != BreathingPhase.IDLE) {
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "$secondsRemaining",
-                style = MaterialTheme.typography.headlineLarge,
-                color = getBreathingColors(phase).first,
-                fontWeight = FontWeight.Medium
-            )
-        } else {
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "$phaseDurationSeconds seconds per phase",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
     }
 }
 
