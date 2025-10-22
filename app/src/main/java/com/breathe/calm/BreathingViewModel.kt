@@ -22,8 +22,9 @@ class BreathingViewModel : ViewModel() {
     private var breathingJob: Job? = null
     
     companion object {
-        private const val PHASE_DURATION_MS = 4000L // 4 seconds per phase
         private const val UPDATE_INTERVAL_MS = 16L // ~60 FPS for smooth animation
+        private const val MIN_DURATION_SECONDS = 2
+        private const val MAX_DURATION_SECONDS = 10
     }
     
     /**
@@ -40,8 +41,9 @@ class BreathingViewModel : ViewModel() {
             var cycleCount = 0
             
             while (_state.value.isActive) {
-                val phaseProgress = (elapsedTime % PHASE_DURATION_MS).toFloat() / PHASE_DURATION_MS
-                val currentSecond = (elapsedTime % PHASE_DURATION_MS / 1000).toInt()
+                val phaseDurationMs = _state.value.phaseDurationSeconds * 1000L
+                val phaseProgress = (elapsedTime % phaseDurationMs).toFloat() / phaseDurationMs
+                val currentSecond = (elapsedTime % phaseDurationMs / 1000).toInt()
                 
                 _state.update { 
                     it.copy(
@@ -56,7 +58,7 @@ class BreathingViewModel : ViewModel() {
                 elapsedTime += UPDATE_INTERVAL_MS
                 
                 // Transition to next phase
-                if (elapsedTime % PHASE_DURATION_MS < UPDATE_INTERVAL_MS) {
+                if (elapsedTime % phaseDurationMs < UPDATE_INTERVAL_MS) {
                     currentPhase = when (currentPhase) {
                         BreathingPhase.INHALE -> BreathingPhase.HOLD_IN
                         BreathingPhase.HOLD_IN -> BreathingPhase.EXHALE
@@ -86,7 +88,27 @@ class BreathingViewModel : ViewModel() {
      */
     fun resetBreathing() {
         stopBreathing()
-        _state.value = BreathingState()
+        _state.update { 
+            BreathingState(phaseDurationSeconds = it.phaseDurationSeconds) 
+        }
+    }
+    
+    /**
+     * Increase phase duration by 1 second
+     */
+    fun increaseDuration() {
+        if (!_state.value.isActive && _state.value.phaseDurationSeconds < MAX_DURATION_SECONDS) {
+            _state.update { it.copy(phaseDurationSeconds = it.phaseDurationSeconds + 1) }
+        }
+    }
+    
+    /**
+     * Decrease phase duration by 1 second
+     */
+    fun decreaseDuration() {
+        if (!_state.value.isActive && _state.value.phaseDurationSeconds > MIN_DURATION_SECONDS) {
+            _state.update { it.copy(phaseDurationSeconds = it.phaseDurationSeconds - 1) }
+        }
     }
     
     /**

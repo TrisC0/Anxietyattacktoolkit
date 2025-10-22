@@ -19,5 +19,6 @@ data class BreathingState(
     val currentPhase: BreathingPhase = BreathingPhase.IDLE,
     val progress: Float = 0f,  // 0.0 to 1.0 for current phase
     val cycleCount: Int = 0,
-    val currentSecond: Int = 0 // Current second in the phase (0-3)
+    val currentSecond: Int = 0, // Current second in the phase (0-3)
+    val phaseDurationSeconds: Int = 4 // Duration of each phase in seconds (adjustable)
 )

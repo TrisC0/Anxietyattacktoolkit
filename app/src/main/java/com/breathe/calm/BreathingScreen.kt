@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
@@ -63,16 +65,44 @@ fun BreathingScreen(
             // Header
             HeaderSection()
             
-            // Main breathing visualization
-            BreathingVisualization(
-                state = state,
-                modifier = Modifier.weight(1f)
-            )
+            // Main breathing visualization with duration controls
+            Column(
+                modifier = Modifier.weight(1f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                // Up arrow to increase duration
+                DurationControlButton(
+                    icon = Icons.Default.KeyboardArrowUp,
+                    enabled = !state.isActive && state.phaseDurationSeconds < 10,
+                    onClick = { viewModel.increaseDuration() },
+                    contentDescription = "Increase duration"
+                )
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                // Breathing visualization
+                BreathingVisualization(
+                    state = state,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                // Down arrow to decrease duration
+                DurationControlButton(
+                    icon = Icons.Default.KeyboardArrowDown,
+                    enabled = !state.isActive && state.phaseDurationSeconds > 2,
+                    onClick = { viewModel.decreaseDuration() },
+                    contentDescription = "Decrease duration"
+                )
+            }
             
             // Phase instruction
             PhaseInstructionText(
                 phase = state.currentPhase,
-                currentSecond = state.currentSecond
+                currentSecond = state.currentSecond,
+                phaseDurationSeconds = state.phaseDurationSeconds
             )
             
             Spacer(modifier = Modifier.height(32.dp))
@@ -135,7 +165,8 @@ private fun BreathingVisualization(
         targetValue = if (state.isActive) targetScale else 0.7f,
         animationSpec = tween(
             durationMillis = if (state.currentPhase == BreathingPhase.HOLD_IN || 
-                               state.currentPhase == BreathingPhase.HOLD_OUT) 0 else 4000,
+                               state.currentPhase == BreathingPhase.HOLD_OUT) 0 
+                            else state.phaseDurationSeconds * 1000,
             easing = LinearEasing
         ),
         label = "breathingScale"
@@ -223,9 +254,38 @@ private fun ProgressRing(
 }
 
 @Composable
+private fun DurationControlButton(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    enabled: Boolean,
+    onClick: () -> Unit,
+    contentDescription: String
+) {
+    IconButton(
+        onClick = onClick,
+        enabled = enabled,
+        modifier = Modifier
+            .size(56.dp)
+            .clip(CircleShape)
+            .background(
+                if (enabled) MaterialTheme.colorScheme.secondaryContainer
+                else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+            )
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = contentDescription,
+            tint = if (enabled) MaterialTheme.colorScheme.onSecondaryContainer
+                   else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+            modifier = Modifier.size(32.dp)
+        )
+    }
+}
+
+@Composable
 private fun PhaseInstructionText(
     phase: BreathingPhase,
-    currentSecond: Int
+    currentSecond: Int,
+    phaseDurationSeconds: Int
 ) {
     val instruction = when (phase) {
         BreathingPhase.IDLE -> "Ready to begin"
@@ -235,7 +295,7 @@ private fun PhaseInstructionText(
         BreathingPhase.HOLD_OUT -> "Hold"
     }
     
-    val secondsRemaining = 4 - currentSecond
+    val secondsRemaining = phaseDurationSeconds - currentSecond
     
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -256,6 +316,13 @@ private fun PhaseInstructionText(
                 style = MaterialTheme.typography.headlineLarge,
                 color = getBreathingColors(phase).first,
                 fontWeight = FontWeight.Medium
+            )
+        } else {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "$phaseDurationSeconds seconds per phase",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
