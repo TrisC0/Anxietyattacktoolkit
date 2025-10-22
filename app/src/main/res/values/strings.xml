@@ -7,7 +7,8 @@
     <string name="start_breathing">Start</string>
     <string name="stop_breathing">Stop</string>
     <string name="reset_breathing">Reset</string>
-    <string name="box_breathing">Anxiety/Panic attack toolkit</string>
+    <string name="box_breathing">Breathe..</string>
+    <string name="breathing_instruction">Follow the circle. Breathe with the rhythm.</string>
     <string name="find_your_calm">Find Your Calm</string>
     <string name="breathing_description">Box breathing helps reduce stress and improve focus through controlled breathing patterns.</string>
     <string name="accessibility_breathing_circle">Breathing visualization circle</string>
